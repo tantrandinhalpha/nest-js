@@ -8,7 +8,8 @@ import {
   Delete,
   Req,
   Query,
-  BadRequestException,
+  ParseIntPipe,
+  HttpStatus,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
@@ -24,8 +25,7 @@ export class UserController {
     @Req() req: Request,
     @Query('name') name: string,
   ) {
-    console.log('Query Parameters:', name);
-    // console.log('Request Headers:', req);
+    console.log('Request Headers:', req);
     return this.userService.create(createUserDto);
   }
 
@@ -35,10 +35,12 @@ export class UserController {
   }
 
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    const user = null;
-    console.log('User:', (user as any).id);
-    throw new BadRequestException('Something is not right');
+  findOne(
+    @Param('id')
+    id: string,
+  ) {
+    // throw new BadRequestException('Something is not right');
+
     return this.userService.findOne(+id);
   }
 
