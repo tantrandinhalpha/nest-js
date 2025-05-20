@@ -10,8 +10,6 @@ import { plainToInstance } from 'class-transformer';
 @Injectable()
 export class ValidationPipe implements PipeTransform<any> {
   async transform(value: any, { metatype: metaType }: ArgumentMetadata) {
-    console.log('ValidationPipe', value, metaType);
-
     if (!metaType || !this.toValidate(metaType)) {
       return value;
     }

@@ -8,30 +8,40 @@ import {
   Delete,
   Req,
   Query,
-  ParseIntPipe,
-  HttpStatus,
+  UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { RolesGuard } from 'src/common/guard/role.guard';
+import { Roles } from 'src/common/decorator/role.decorator';
+import { TimeoutInterceptor } from 'src/common/interceptor/timeout.interceptor';
 
 @Controller('user')
+@UseGuards(RolesGuard)
+// @UseInterceptors(new TimeoutInterceptor(5000)) // 5s
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
+  @Roles(['admin'])
   @Post()
   create(
     @Body() createUserDto: CreateUserDto,
     @Req() req: Request,
     @Query('name') name: string,
   ) {
-    console.log('Request Headers:', req);
     return this.userService.create(createUserDto);
   }
 
   @Get()
-  findAll() {
-    return this.userService.findAll();
+  async findAll() {
+    return await new Promise((resolve) => {
+      setTimeout(() => {
+        console.log('Promise resolved');
+        resolve(this.userService.findAll());
+      }, 2000);
+    });
   }
 
   @Get(':id')
